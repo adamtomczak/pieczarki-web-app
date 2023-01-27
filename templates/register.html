@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Logowanie
+{% endblock %}
+
+{% block main %}
+<div class="flex-column d-flex col-md-6 mx-auto col-lg-4">
+  <h1>Rejestracja</h1>
+  <form action="/register" method="post" class="p-4 p-md-5 border rounded-3 bg-light">
+    <div class="form-floating mb-3">
+      <input autocomplete="off" autofocus type="text" class="form-control" id="username" name="username" placeholder="Nazwa użytkownika">
+      <label for="floatingInput">Nazwa użytkownika</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="password" name="password" class="form-control" id="password" placeholder="Hasło">
+      <label for="floatingPassword">Hasło</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="password" name="confirmation" class="form-control" id="password" placeholder="Powtórz hasło">
+      <label for="floatingPassword">Powtórz hasło</label>
+    </div>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Zarejestruj</button>
+  </form>
+</div>
+{% endblock %}

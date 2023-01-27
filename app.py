@@ -1,5 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
+from helpers import login_required, pln
+
 # Configure application
 app = Flask(__name__)
 
@@ -20,5 +22,14 @@ def after_request(response):
     return response
 
 @app.route('/')
+@login_required
 def index():
     return render_template("index.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    return render_template("login.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    return render_template("register.html")
