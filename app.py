@@ -28,7 +28,18 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    # Forget any user_id
+    session.clear()
+    error = {}
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            error["username"] = True
+            return render_template("login.html", error=error)
+
+    else:
+        return render_template("login.html", error=error)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
