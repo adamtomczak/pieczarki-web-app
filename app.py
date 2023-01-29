@@ -28,14 +28,23 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    """Log user in"""
+
     # Forget any user_id
     session.clear()
     error = {}
+
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
+
         # Ensure username was submitted
         if not request.form.get("username"):
             error["username"] = True
+            return render_template("login.html", error=error)
+
+        # Ensure username was submitted
+        elif not request.form.get("password"):
+            error["password"] = True
             return render_template("login.html", error=error)
 
     else:

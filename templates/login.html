@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 
+{% block script %}
+  {% if error["username"] %}
+    loginError("#username", "#userform", "Wpisz nazwę użytkownika");
+  {% endif %}
+  {% if error["username"] %}
+    loginError("#password", "#passwordform", "Wpisz hasło");
+  {% endif %}
+{% endblock %}
+
 {% block title %}
     Logowanie
 {% endblock %}
@@ -7,16 +16,11 @@
 {% block main %}
 <div class="flex-column d-flex col-md-6 mx-auto col-lg-4">
     <form action="/login" method="post" class="p-4 p-md-5 border rounded-3 bg-light">
-      <div class="form-floating mb-3">
-      {% if error["username"] %}
-        <input autocomplete="off" autofocus type="text" class="form-control is-invalid" id="username" name="username" placeholder="Nazwa użytkownika">
-        <div class="invalid-feedback">Wprowadź nazwę użytkownika.</div>
-      {% else %}
+      <div class="form-floating mb-3" id="userform" >
         <input autocomplete="off" autofocus type="text" class="form-control" id="username" name="username" placeholder="Nazwa użytkownika">
-      {% endif %}
         <label for="floatingInput">Nazwa użytkownika</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3" id="passwordform">
         <input type="password" name="password" class="form-control" id="password" placeholder="Hasło">
         <label for="floatingPassword">Hasło</label>
       </div>
