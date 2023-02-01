@@ -4,8 +4,14 @@
   {% if error["username"] %}
     loginError("#username", "#userform", "Wpisz nazwę użytkownika");
   {% endif %}
-  {% if error["username"] %}
+
+  {% if error["password"] %}
     loginError("#password", "#passwordform", "Wpisz hasło");
+  {% endif %}
+
+  {% if error["invalid"] %}
+  loginError("#username", "#userform");
+    loginError("#password", "#passwordform", "Niepoprawna nazwa użytkownika lub hasło");
   {% endif %}
 {% endblock %}
 
