@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
-from helpers import login_required, pln
+from helpers import login_required, pln, isPasswordStrong
 from werkzeug.security import check_password_hash, generate_password_hash
 
 # Configure application
@@ -104,5 +104,44 @@ def register():
             error["password"] = True
             return render_template("register.html", error=error)
 
+        # Ensure username was submitted
+        if not request.form.get("confirmation"):
+            error["confirmation"] = True
+            return render_template("register.html", error=error)
+
+        # Ensure confirmation and password are the same
+        if not (request.form.get("confirmation") == request.form.get("password")):
+            error["not equal"] = True
+            return render_template("register.html", error=error)
+
+        # Ensure password is strong enought
+        if not isPasswordStrong(request.form.get("password")):
+            return redirect("/register")
+        
+        with sqlite3.connect("pieczarki.db") as con:
+            cur = con.cursor()
+            cur.execute("INSERT INTO users (username, hash) VALUES(?, ?)",
+                        (request.form.get("username"), generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)))
+            con.commit()
+            res = cur.execute("SELECT id FROM users WHERE username = ?", [request.form.get("username")])
+            id = res.fetchone()
+        
+        session["user_id"] = id[0]
+        # Redirect user to home page
+        flash("Zostałeś zarejestrowany!")
+        return redirect("/")
+
+
     else:
         return render_template("register.html", error=error)
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    flash("Wylogowałeś się")
+    return redirect("/login")

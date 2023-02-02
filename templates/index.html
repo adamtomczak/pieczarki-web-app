@@ -4,6 +4,16 @@
     Strona główna
 {% endblock %}
 
+{% block header %}
+  {% if get_flashed_messages() %}
+  <header>
+      <div id="flash" class="alert alert-success alert-dismissible fade show mb-0 text-center" role="alert">
+          {{ get_flashed_messages() | join(" ") }}
+      </div>
+  </header>
+  {% endif %}
+{% endblock %}
+
 {% block main %}
 DUPA
 {% endblock %}

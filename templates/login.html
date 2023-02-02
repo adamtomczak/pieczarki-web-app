@@ -19,6 +19,16 @@
     Logowanie
 {% endblock %}
 
+{% block header %}
+  {% if get_flashed_messages() %}
+  <header>
+      <div id="flash" class="alert alert-success alert-dismissible fade show mb-0 text-center" role="alert">
+          {{ get_flashed_messages() | join(" ") }}
+      </div>
+  </header>
+  {% endif %}
+{% endblock %}
+
 {% block main %}
 <div class="flex-column d-flex col-md-6 mx-auto col-lg-4">
     <form action="/login" method="post" class="p-4 p-md-5 border rounded-3 bg-light">
