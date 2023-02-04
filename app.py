@@ -75,6 +75,7 @@ def login():
     else:
         return render_template("login.html", error=error)
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
         
@@ -135,6 +136,7 @@ def register():
     else:
         return render_template("register.html", error=error)
 
+
 @app.route("/logout")
 def logout():
     """Log user out"""
@@ -145,3 +147,13 @@ def logout():
     # Redirect user to login form
     flash("Wylogowałeś się")
     return redirect("/login")
+
+
+@app.route("/newcultivation", methods=["GET", "POST"])
+@login_required
+def newcultivation():
+
+    if request.method == "POST":
+        print("hh")
+    else:
+        return render_template("newcultivation.html")

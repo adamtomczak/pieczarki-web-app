@@ -23,11 +23,11 @@
 
         <div class="container">
             <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-              <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+              <a href="/" class="d-flex align-items-center col-md-3 mx-2 mb-2 mb-md-0 text-dark text-decoration-none">
                 <img src="/static/champignon.svg" alt="pieczarka" width="50" height="50">
               </a>
               {% if session["user_id"] %}
-                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <ul class="nav col-12 col-md-auto mb-2 d-flex justify-content-around mb-md-0">
                   <li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
                   <li><a href="#" class="nav-link px-2 link-dark">Features</a></li>
                   <li><a href="#" class="nav-link px-2 link-dark">Pricing</a></li>
@@ -37,14 +37,14 @@
                 <a class="btn btn-outline-primary me-2" href="/logout" role="button">Wyloguj się</a>
               {% else %}
                 <div class="col-md-3 text-end">
-                  <a class="btn btn-outline-primary me-2" href="/login" role="button">Zaloguj się</a>
+                  <a class="btn btn-outline-primary mx-2" href="/login" role="button">Zaloguj się</a>
                   <a class="btn btn-primary" href="/register" role="button">Rejestracja</a>
                 </div>
               {% endif %}
             </header>
           </div>
         {% block header %}{% endblock %}
-        <main class="container-fluid py-5 text-center">
+        <main class="container">
             {% block main %}{% endblock %}
         </main>
     </body>

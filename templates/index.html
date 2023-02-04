@@ -9,11 +9,15 @@
   <header>
       <div id="flash" class="alert alert-success alert-dismissible fade show mb-0 text-center" role="alert">
           {{ get_flashed_messages() | join(" ") }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
   </header>
   {% endif %}
 {% endblock %}
 
 {% block main %}
-DUPA
+<div class="row">
+    <div class="col-1"></div>
+    <a class="btn btn-primary col-2" href="/newcultivation" role="button">Nowa uprawa</a>
+</div>
 {% endblock %}
