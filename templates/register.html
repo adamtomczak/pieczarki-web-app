@@ -2,23 +2,23 @@
 
 {% block script %}
   {% if error["username"] %}
-    loginError("#username", "#userform", "Wpisz nazwę użytkownika");
+    formError("#username", "#userform", "Wpisz nazwę użytkownika");
   {% endif %}
 
   {% if error["password"] %}
-    loginError("#password", "#passwordform", "Wpisz hasło");
+    formError("#password", "#passwordform", "Wpisz hasło");
   {% endif %}
 
   {% if error["taken"] %}
-    loginError("#username", "#userform", "Nazwa użytkownika jest zajęta");
+    formError("#username", "#userform", "Nazwa użytkownika jest zajęta");
   {% endif %}
 
   {% if error["confirmation"] %}
-    loginError("#confirmation", "#confirmationform", "Proszę powtórzyć hasło");
+    formError("#confirmation", "#confirmationform", "Proszę powtórzyć hasło");
   {% endif %}
 
   {% if error["not equal"] %}
-    loginError("#confirmation", "#confirmationform", "Hasła nie są takie same");
+    formError("#confirmation", "#confirmationform", "Hasła nie są takie same");
   {% endif %}
 {% endblock %}
   
@@ -43,15 +43,15 @@
     <h3 class="mb-3">Rejestracja</h3>
     <div class="form-floating mb-3" id="userform">
       <input autocomplete="off" autofocus type="text" class="form-control" id="username" name="username" placeholder="Nazwa użytkownika">
-      <label for="floatingInput">Nazwa użytkownika</label>
+      <label for="username">Nazwa użytkownika</label>
     </div>
     <div class="form-floating mb-3" id="passwordform">
       <input type="password" name="password" class="form-control" id="password" placeholder="Hasło">
-      <label for="floatingPassword">Hasło</label>
+      <label for="password">Hasło</label>
     </div>
     <div class="form-floating mb-3" id="confirmationform">
       <input type="password" name="confirmation" class="form-control" id="confirmation" placeholder="Powtórz hasło">
-      <label for="floatingPassword">Powtórz hasło</label>
+      <label for="confirmation">Powtórz hasło</label>
     </div>
     <button class="w-100 btn btn-lg btn-primary" type="submit">Zarejestruj</button>
   </form>

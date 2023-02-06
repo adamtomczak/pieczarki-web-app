@@ -1,4 +1,4 @@
-function loginError(child, parent, text)
+function formError(child, parent, text)
 {
     document.addEventListener('DOMContentLoaded', function(){
         document.querySelector(child).setAttribute('class', 'form-control is-invalid');

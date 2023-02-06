@@ -153,7 +153,28 @@ def logout():
 @login_required
 def newcultivation():
 
+    forms =["dataKostki", "pieczarkarnia", "producent", "faza", "liczbaKostek", "cenaKostki"]
+    errors = []
+    answers = [session["user_id"]]
     if request.method == "POST":
-        print("hh")
+        
+        for form in forms:
+            if not request.form.get(form):
+                errors.append(form)
+
+        if errors:
+            return render_template("newcultivation.html", errors=errors)
+
+        for form in forms:
+            answers.append(request.form.get(form)) 
+
+        with sqlite3.connect("pieczarki.db") as con:
+            cur = con.cursor()
+            cur.execute("INSERT INTO cultivations (user_id, date, hall, manufacturer, phase, cubesCount, price) VALUES(?, ?, ?, ?, ?, ?, ?)", answers)
+            con.commit()
+
+        flash("Uprawa została stworzona")
+        return redirect("/")
+
     else:
-        return render_template("newcultivation.html")
+        return render_template("newcultivation.html",errors=errors)

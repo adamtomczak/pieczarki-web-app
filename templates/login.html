@@ -2,16 +2,16 @@
 
 {% block script %}
   {% if error["username"] %}
-    loginError("#username", "#userform", "Wpisz nazwę użytkownika");
+    formError("#username", "#userform", "Wpisz nazwę użytkownika");
   {% endif %}
 
   {% if error["password"] %}
-    loginError("#password", "#passwordform", "Wpisz hasło");
+    formError("#password", "#passwordform", "Wpisz hasło");
   {% endif %}
 
   {% if error["invalid"] %}
-  loginError("#username", "#userform");
-    loginError("#password", "#passwordform", "Niepoprawna nazwa użytkownika lub hasło");
+  formError("#username", "#userform");
+    formError("#password", "#passwordform", "Niepoprawna nazwa użytkownika lub hasło");
   {% endif %}
 {% endblock %}
 
@@ -35,11 +35,11 @@
     <form action="/login" method="post" class="p-4 p-md-5 border rounded-3 bg-light">
       <div class="form-floating mb-3" id="userform" >
         <input autocomplete="off" autofocus type="text" class="form-control" id="username" name="username" placeholder="Nazwa użytkownika">
-        <label for="floatingInput">Nazwa użytkownika</label>
+        <label for="username">Nazwa użytkownika</label>
       </div>
       <div class="form-floating mb-3" id="passwordform">
         <input type="password" name="password" class="form-control" id="password" placeholder="Hasło">
-        <label for="floatingPassword">Hasło</label>
+        <label for="password">Hasło</label>
       </div>
       <button class="w-100 btn btn-lg btn-primary" type="submit">Zaloguj</button>
     </form>
