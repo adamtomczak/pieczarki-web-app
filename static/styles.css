@@ -10,10 +10,6 @@ table td {
     vertical-align: middle;
 }
 
-tbody td:nth-of-type(odd) {
-    background-color: #e3dada;
-}
-
 tbody th {
     background-color: #a6a6a6;
 }
