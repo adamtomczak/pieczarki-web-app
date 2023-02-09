@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block script %}
+    {% if error["name"] %}
+        formError("#name", "#nameform", "Wpisz nazwę pieczarkarni");
+    {% endif %}
+    {% if error["max_cubes"] %}
+        formError("#max_cubes");
+    {% endif %}
+    {% if error["area"] %}
+        formError("#area");
+    {% endif %}   
+{% endblock %}
+
+{% block title %}
+    Dodaj pieczarkarnie
+{% endblock %}
+
+{% block main %}
+<div class="flex-column d-flex align-items-center col-md-6 mx-auto py-5 col-lg-4">
+    <form action="/newhall" method="post" class="p-md-5 border rounded-3 bg-light">
+        <div id="nameform" class="p-2">
+            <label for="name">Oznaczenie/nazwa pieczarkarni</label>
+            <input autocomplete="off" type="text" min="0" class="form-control w-auto" id="name" name="name" placeholder="Nazwa">
+        </div>
+        <div class="p-2">
+            <label for="max_cubes">Maksymalna liczba kostek</label>
+            <input autocomplete="off" type="number" min="0" step="1" class="form-control w-auto" id="max_cubes" name="max_cubes" placeholder="Liczba kostek">
+        </div>
+        <div class="p-2">
+            <label for="area">Powierzchnia pieczarkarni w m<sup>2</sup></label>
+            <input autocomplete="off" type="number" min="0" step="0.1" class="form-control w-100" id="area" name="area" placeholder="Powierzchnia pieczarkarni">
+        </div>
+        <div class="p-2">
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Dodaj pieczarkarnie</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

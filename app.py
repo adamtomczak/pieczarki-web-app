@@ -27,18 +27,27 @@ class User(db.Model):
     username = db.Column(db.String(50), nullable=False, unique=True)
     hash = db.Column(db.String(100), nullable=False)
     cultivations = db.relationship('Cultivation', backref='user', lazy=True)
+    halls = db.relationship('Hall', backref='user', lazy=True)
 
 class Cultivation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    hall_id = db.Column(db.Integer, db.ForeignKey('hall.id'), nullable=False)
     date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
-    hall = db.Column(db.String(50), nullable=False)
     manufacturer = db.Column(db.String(50), nullable=False)
     phase = db.Column(db.String(50), nullable=False)
     cubes_count = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(100))
 
+class Hall(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    max_cubes = db.Column(db.Integer)
+    area = db.Column(db.Float)
+    #empty = db.Column(db.Boolean default=True)
+    cultivations = db.relationship('Cultivation', backref='hall', lazy=True)
 
 
 @app.after_request
@@ -53,7 +62,7 @@ def after_request(response):
 @app.route('/')
 @login_required
 def index():
-    cultivations = Cultivation.query.all()
+    cultivations = Cultivation.query.filter_by(user_id = session["user_id"]).all()
     return render_template("index.html", cultivations=cultivations)
 
 
@@ -170,11 +179,10 @@ def logout():
 @login_required
 def newcultivation():
 
-    forms =["date", "hall", "manufacturer", "phase", "cubes_count", "price"]
+    forms =["date", "hall_id", "manufacturer", "phase", "cubes_count", "price"]
     errors = []
     answ = {"user_id":session["user_id"]}
-    if request.method == "POST":
-        
+    if request.method == "POST": 
         for form in forms:
             if not request.form.get(form):
                 errors.append(form)
@@ -187,8 +195,8 @@ def newcultivation():
 
         cultivation = Cultivation(
             user_id = answ["user_id"],
+            hall_id = answ["hall_id"],
             date = datetime.strptime(answ["date"], '%Y-%m-%d').date(),
-            hall = answ["hall"],
             manufacturer = answ["manufacturer"],
             phase = answ["phase"],
             cubes_count = answ["cubes_count"],
@@ -201,9 +209,56 @@ def newcultivation():
         return redirect("/")
 
     else:
-        return render_template("newcultivation.html",errors=errors)
 
-@app.route('/cultivation/<int:cultivation_id>')
+        halls = Hall.query.filter_by(user_id = session["user_id"]).all()
+        return render_template("newcultivation.html",errors=errors, halls=halls)
+
+@app.route('/hall')
+@login_required
+def hall():
+
+    halls = Hall.query.filter_by(user_id = session["user_id"]).all()
+    return render_template("hall.html", halls=halls)
+
+
+@app.route('/newhall', methods=["GET", "POST"])
+@login_required
+def newhall():
+
+    error = {}
+
+    if request.method == "POST":
+
+        if not request.form.get("name"):
+            error["name"] = True
+            return render_template("newhall.html", error=error)
+
+        if not request.form.get("max_cubes"):
+            error["max_cubes"] = True
+            return render_template("newhall.html", error=error)
+
+        if not request.form.get("area"):
+            error["area"] = True
+            return render_template("newhall.html", error=error)
+
+        hall = Hall(
+            user_id = session["user_id"],
+            name = request.form.get("name"),
+            max_cubes = request.form.get("max_cubes"),
+            area = request.form.get("area")
+        )
+        db.session.add(hall)
+        db.session.commit()
+
+        flash("Pieczarkarnia została dodana")
+        return redirect("/hall")
+
+    else:
+        return render_template("newhall.html", error=error)
+
+
+"""@app.route('/cultivation/<int:cultivation_id>')
 def cultivation_detail(cultivation_id):
     cultivation = Cultivation.query.get(cultivation_id)
-    return render_template('cultivation_detail.html', cultivation=cultivation)
+    return render_template('cultivation_detail.html', cultivation=cultivation)"""
+

@@ -26,12 +26,11 @@
         </div>
         <div class="d-flex flex-row flex-wrap justify-content-center">
             <div class="p-2">
-                <select class="form-select w-auto" name="hall" id="hall">
+                <select class="form-select w-auto" name="hall_id" id="hall_id">
                     <option disabled="" selected="">Pieczarkarnia</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
+                    {% for hall in halls %}
+                    <option value="{{ hall.id }}">{{ hall.name }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="p-2">
