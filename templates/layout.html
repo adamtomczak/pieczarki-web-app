@@ -29,12 +29,12 @@
               {% if session["user_id"] %}
                 <ul class="nav col-12 col-md-auto mb-2 d-flex justify-content-around mb-md-0">
                   <li><a href="/" class="nav-link px-2 link-dark">Strona główna</a></li>
-                  <li><a href="#" class="nav-link px-2 link-dark">Zbiory</a></li>
+                  <li><a href="/harvests" class="nav-link px-2 link-dark">Zbiory</a></li>
                   <li><a href="/hall" class="nav-link px-2 link-dark">Pieczarkarnie</a></li>
                   <li><a href="#" class="nav-link px-2 link-dark">Notatki</a></li>
                   <li><a href="#" class="nav-link px-2 link-dark">Historia upraw</a></li>
                 </ul>
-                <div class="col-md-3 text-end"></div>
+                <div class="col-md-3 text-end">
                   <a class="btn btn-outline-primary me-2" href="/logout" role="button">Wyloguj się</a>
                 </div>
               {% else %}

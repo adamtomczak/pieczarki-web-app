@@ -16,33 +16,50 @@
 {% endblock %}
 
 {% block main %}
-<table class="table table-striped p-4 p-md-5 border rounded-3 bg-light text-center">
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Pieczarkarnia</th>
-        <th>Producent</th>
-        <th>Faza</th>
-        <th>Status</th>
-        <th>Akcja</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for cultivation in cultivations %}
-        <tr>
-          <td>{{ cultivation.date }}</td>
-          <td>{{ cultivation.hall.name }}</td>
-          <td>{{ cultivation.manufacturer }}</td>
-          <td>{{ cultivation.phase }}</td>
-          <td>{{ cultivation.status }}</td>
-          <td><button type="button" class="btn btn-primary">Dodaj zbiory</button></td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  
-<div class="row">
+  {% if nohalls %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    Nie masz dodanych pieczarkarni. <a href="/newhall" class="alert-link">Dodaj pieczarkarnie</a>, aby móc dodać uprawę.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <div class="row">
     <div class="col-1"></div>
-    <a class="btn btn-primary col-2" href="/newcultivation" role="button">Nowa uprawa</a>
-</div>
+    <button type="button" class="btn btn-primary col-2">Nowa uprawa</button>
+  </div>
+  {% else %}
+  <table class="table table-striped p-4 p-md-5 border rounded-3 bg-light text-center">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Pieczarkarnia</th>
+          <th>Producent</th>
+          <th>Faza</th>
+          <th>Status</th>
+          <th>Akcja</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cultivation in cultivations %}
+          <tr>
+            <td>{{ cultivation.date }}</td>
+            <td>{{ cultivation.hall.name }}</td>
+            <td>{{ cultivation.manufacturer }}</td>
+            <td>{{ cultivation.phase }}</td>
+            <td>{{ cultivation.status }}</td>
+            {% if cultivation.status0 %}
+            <td><a href="{{ url_for('peat', cultivation_id=cultivation.id) }}" class="btn btn-primary">Torf</a></td>
+            {% elif cultivation.status1 %}
+            <td><a href="{{ url_for('shock', cultivation_id=cultivation.id) }}" class="btn btn-primary">Szok</a></td>
+            {% else %}
+            <td><a href="{{ url_for('harvest', cultivation_id=cultivation.id) }}" class="btn btn-primary">Dodaj zbiory</a></td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+  <div class="row">
+      <div class="col-1"></div>
+      <a class="btn btn-primary col-2" href="/newcultivation" role="button">Nowa uprawa</a>
+  </div>
+  {% endif %}
 {% endblock %}

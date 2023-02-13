@@ -33,12 +33,17 @@ class Cultivation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     hall_id = db.Column(db.Integer, db.ForeignKey('hall.id'), nullable=False)
-    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.Date, nullable=False, default=datetime.now)
     manufacturer = db.Column(db.String(50), nullable=False)
     phase = db.Column(db.String(50), nullable=False)
     cubes_count = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(100))
+    peat_date = db.Column(db.Date)
+    shock_date = db.Column(db.Date)
+    harvests = db.relationship('Harvest', backref='cultivation', lazy=True)
+    costs = db.relationship('Cost', backref='cultivation', lazy=True)
+    earnings = db.relationship('Earning', backref='cultivation', lazy=True)
 
 class Hall(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,8 +51,31 @@ class Hall(db.Model):
     name = db.Column(db.String(50), nullable=False)
     max_cubes = db.Column(db.Integer)
     area = db.Column(db.Float)
-    #empty = db.Column(db.Boolean default=True)
+    is_empty = db.Column(db.Boolean, default=True)
     cultivations = db.relationship('Cultivation', backref='hall', lazy=True)
+
+class Harvest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cultivation_id = db.Column(db.Integer, db.ForeignKey('cultivation.id'), nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    ex = db.Column(db.Float)
+    a = db.Column(db.Float)
+    b = db.Column(db.Float)
+    c = db.Column(db.Float)
+    sr = db.Column(db.Float)
+    pw = db.Column(db.Float)
+
+class Cost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cultivation_id = db.Column(db.Integer, db.ForeignKey('cultivation.id'), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.Float, nullable=False)
+
+class Earning(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cultivation_id = db.Column(db.Integer, db.ForeignKey('cultivation.id'), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.Float, nullable=False)
 
 
 @app.after_request
@@ -62,8 +90,27 @@ def after_request(response):
 @app.route('/')
 @login_required
 def index():
+
     cultivations = Cultivation.query.filter_by(user_id = session["user_id"]).all()
-    return render_template("index.html", cultivations=cultivations)
+
+    halls = Hall.query.filter_by(user_id = session["user_id"]).all()
+    nohalls = None
+    if not halls:
+        nohalls = True
+    
+    #status_list = ["przerastanie", "torf", "zbiory"]
+
+    for cultivation in cultivations:
+        match cultivation.status:
+            case "przerastanie":
+                cultivation.status0 = True
+            case "torf":
+                cultivation.status1 = True
+            case "zbiory":
+                cultivation.status2 = True
+        
+        
+    return render_template("index.html", cultivations=cultivations, nohalls=nohalls)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -181,8 +228,11 @@ def newcultivation():
 
     forms =["date", "hall_id", "manufacturer", "phase", "cubes_count", "price"]
     errors = []
-    answ = {"user_id":session["user_id"]}
+    
     if request.method == "POST": 
+        forms =["date", "hall_id", "manufacturer", "phase", "cubes_count", "price"]
+        answ = {"user_id":session["user_id"]}
+
         for form in forms:
             if not request.form.get(form):
                 errors.append(form)
@@ -200,18 +250,29 @@ def newcultivation():
             manufacturer = answ["manufacturer"],
             phase = answ["phase"],
             cubes_count = answ["cubes_count"],
-            price = answ["price"]
+            price = answ["price"],
+            status = "przerastanie"
         )
         db.session.add(cultivation)
+        db.session.commit()
+        
+        cost = Cost(
+            cultivation_id = db.session.query(Cultivation.id).filter_by(hall_id = answ["hall_id"]).scalar(),
+            name = "Kostka",
+            value = float(answ["price"]) * float(answ["cubes_count"])
+        )
+        db.session.add(cost)
+        hall = Hall.query.get(answ["hall_id"])
+        hall.is_empty = False
         db.session.commit()
 
         flash("Uprawa została stworzona")
         return redirect("/")
 
     else:
-
+        date = datetime.now()
         halls = Hall.query.filter_by(user_id = session["user_id"]).all()
-        return render_template("newcultivation.html",errors=errors, halls=halls)
+        return render_template("newcultivation.html",errors=errors, halls=halls, date = date.strftime("%Y-%m-%d"))
 
 @app.route('/hall')
 @login_required
@@ -256,9 +317,110 @@ def newhall():
     else:
         return render_template("newhall.html", error=error)
 
+@app.route('/harvest/<int:cultivation_id>', methods=["GET", "POST"])
+@login_required
+def harvest(cultivation_id):
 
-"""@app.route('/cultivation/<int:cultivation_id>')
-def cultivation_detail(cultivation_id):
-    cultivation = Cultivation.query.get(cultivation_id)
-    return render_template('cultivation_detail.html', cultivation=cultivation)"""
+    if request.method == "POST":
+        forms = ["ex", "a", "b", "c", "sr", "pw"]
+        answ = {}
+
+        for form in forms:
+            if not request.form.get(form):
+                answ[form] = 0.0
+            else:
+                answ[form] = request.form.get(form)
+        date = request.form.get("date").replace("T", " ")
+
+        harvest = Harvest(
+            cultivation_id = cultivation_id,
+            date = datetime.strptime(date, '%Y-%m-%d %H:%M'),
+            ex = answ["ex"],
+            a = answ["a"],
+            b = answ["b"],
+            c = answ["c"],
+            sr = answ["sr"],
+            pw = answ["pw"]
+        )
+        db.session.add(harvest)
+        db.session.commit()
+        
+        flash("Zbiory zostały dodane")
+        return redirect("/harvests")
+
+    else:
+        cultivation = Cultivation.query.filter_by(id = cultivation_id).first()
+        date = datetime.now()
+        return render_template('harvest.html', cultivation=cultivation, date=date.strftime("%Y-%m-%dT%H:%M"))
+
+@app.route('/harvests')
+@login_required
+def harvests():
+    
+    query_results = (
+    db.session.query(Cultivation,
+                     db.func.sum(Harvest.ex).label("sum_ex"),
+                     db.func.sum(Harvest.b).label("sum_a"),
+                     db.func.sum(Harvest.b).label("sum_b"),
+                     db.func.sum(Harvest.c).label("sum_c"),
+                     db.func.sum(Harvest.sr).label("sum_sr"),
+                     db.func.sum(Harvest.pw).label("sum_pw"))
+    .join(Harvest)
+    .filter(Cultivation.user_id == session["user_id"])
+    .group_by(Cultivation.id)
+    .all()
+    )
+
+    cultivations = []
+    for cultivation, sum_ex, sum_a, sum_b, sum_c, sum_sr, sum_pw in query_results:
+        cultivation.sum_ex = sum_ex
+        cultivation.sum_a = sum_a
+        cultivation.sum_b = sum_b
+        cultivation.sum_c = sum_c
+        cultivation.sum_sr = sum_sr
+        cultivation.sum_pw = sum_pw
+        cultivation.sum = sum_ex + sum_a + sum_b + sum_c + sum_sr + sum_pw
+        cultivations.append(cultivation)
+
+    return render_template("harvests.html", cultivations=cultivations)
+
+@app.route('/peat/<int:cultivation_id>', methods=["GET", "POST"])
+@login_required
+def peat(cultivation_id):
+
+    cultivation = Cultivation.query.filter_by(id = cultivation_id).first()
+
+    if request.method == "POST":
+        date = request.form.get("date")
+        cultivation.peat_date = datetime.strptime(date, '%Y-%m-%d').date()
+        cultivation.status = "torf"
+        db.session.commit()
+
+        flash("Dodano datę torfu:" + date)
+        return redirect("/")
+    else:
+        date = datetime.now()
+        return render_template('peat.html', cultivation=cultivation, date=date.strftime("%Y-%m-%d"))
+            
+
+
+@app.route('/shock/<int:cultivation_id>', methods=["GET", "POST"])
+@login_required
+def shock(cultivation_id):
+
+    cultivation = Cultivation.query.filter_by(id = cultivation_id).first()
+
+    if request.method == "POST":
+        date = request.form.get("date").replace("T", " ")
+        cultivation.shock_date = datetime.strptime(date, '%Y-%m-%d %H:%M')
+        cultivation.status = "zbiory"
+        db.session.commit()
+
+        flash("Dodano datę szoku:" + date)
+        return redirect("/")
+
+    else:
+        date = datetime.now()
+        return render_template('shock.html', cultivation=cultivation, date=date.strftime("%Y-%m-%dT%H:%M"))
+
 

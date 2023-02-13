@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Zbiory
+{% endblock %}
+
+{% block main %}
+<div class="p-4 p-md-5 border rounded-3 bg-light text-center">
+    <h2 class="p-3 text-center">Zbiory</h2>
+    {% for cultivation in cultivations %}
+    <h3 class="p-2 text-center">Pieczarkarnia: {{ cultivation.hall.name }}</h3>   
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Eksport</th>
+                <th>A</th>
+                <th>B</th>
+                <th>C</th>
+                <th>Świeży rynek</th>
+                <th>PW</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for harvest in cultivation.harvests %}
+            <tr>
+                <td>{{ harvest.date }}</td>
+                <td>{{ harvest.ex }}</td>
+                <td>{{ harvest.a }}</td>
+                <td>{{ harvest.b }}</td>
+                <td>{{ harvest.c }}</td>
+                <td>{{ harvest.sr }}</td>
+                <td>{{ harvest.pw }}</td>       
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="border-0 fw-bold text-end">SUMA: {{ cultivation.sum }}kg</td>
+                <td>{{ cultivation.sum_ex }}kg</td>
+                <td>{{ cultivation.sum_a }}kg</td>
+                <td>{{ cultivation.sum_b }}kg</td>
+                <td>{{ cultivation.sum_c }}kg</td>
+                <td>{{ cultivation.sum_sr }}kg</td>
+                <td>{{ cultivation.sum_pw }}kg</td> 
+            </tr>
+        </tfoot>
+    </table>
+    {% endfor %}
+</div>
+  {% endblock %}
