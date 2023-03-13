@@ -4,12 +4,9 @@
     {% if error["name"] %}
         formError("#name", "#nameform", "Wpisz nazwę pieczarkarni");
     {% endif %}
-    {% if error["max_cubes"] %}
-        formError("#max_cubes");
+    {% if error["taken"] %}
+        formError("#name", "#nameform", "Pieczarkarnia o tej nazwie już istnieje");
     {% endif %}
-    {% if error["area"] %}
-        formError("#area");
-    {% endif %}   
 {% endblock %}
 
 {% block title %}

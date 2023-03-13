@@ -28,8 +28,8 @@
       {% for hall in halls %}
         <tr>
           <td>{{ hall.name }}</td>
-          <td>{{ hall.max_cubes }}</td>
-          <td>{{ hall.area }} m<sup>2</sup></td>
+          <td>{% if hall.max_cubes %}{{ hall.max_cubes }}{% endif %}</td>
+          <td>{% if hall.area %}{{ hall.area }} m<sup>2</sup>{% endif %}</td>
         </tr>
       {% endfor %}
     </tbody>

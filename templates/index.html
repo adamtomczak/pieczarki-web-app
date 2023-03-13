@@ -26,36 +26,49 @@
     <button type="button" class="btn btn-primary col-2">Nowa uprawa</button>
   </div>
   {% else %}
-  <table class="table table-striped p-4 p-md-5 border rounded-3 bg-light text-center">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Pieczarkarnia</th>
-          <th>Producent</th>
-          <th>Faza</th>
-          <th>Status</th>
-          <th>Akcja</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cultivation in cultivations %}
+    {% if cultivations %}
+    <table class="table table-striped p-4 p-md-5 border rounded-3 bg-light text-center">
+        <thead>
           <tr>
-            <td>{{ cultivation.date }}</td>
-            <td>{{ cultivation.hall.name }}</td>
-            <td>{{ cultivation.manufacturer }}</td>
-            <td>{{ cultivation.phase }}</td>
-            <td>{{ cultivation.status }}</td>
-            {% if cultivation.status0 %}
-            <td><a href="{{ url_for('peat', cultivation_id=cultivation.id) }}" class="btn btn-primary">Torf</a></td>
-            {% elif cultivation.status1 %}
-            <td><a href="{{ url_for('shock', cultivation_id=cultivation.id) }}" class="btn btn-primary">Szok</a></td>
-            {% else %}
-            <td><a href="{{ url_for('harvest', cultivation_id=cultivation.id) }}" class="btn btn-primary">Dodaj zbiory</a></td>
-            {% endif %}
+            <th>Data załadunku</th>
+            <th>Pieczarkarnia</th>
+            <th>Producent kostki</th>
+            <th>Status</th>
+            <th colspan="2">Akcja</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for cultivation in cultivations %}
+            <tr>
+              <td>{{ cultivation.date }}</td>
+              <td>{{ cultivation.hall.name }}</td>
+              <td>{{ cultivation.manufacturer }}</td>
+              <td>{{ cultivation.status }}</td>
+              {% if cultivation.status0 %}
+              <td><a href="{{ url_for('peat', cultivation_id=cultivation.id) }}" class="btn btn-primary">Torf</a></td>
+              {% elif cultivation.status1 %}
+              <td><a href="{{ url_for('shock', cultivation_id=cultivation.id) }}" class="btn btn-primary">Szok</a></td>
+              {% else %}
+              <td><a href="{{ url_for('harvest', cultivation_id=cultivation.id) }}" class="btn btn-primary">Dodaj zbiory</a></td>
+              {% endif %}
+              <td>
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    więcej
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="">
+                    <li><a class="dropdown-item" href="#">Info</a></li>
+                    <li><a class="dropdown-item" href="#">Dodaj koszt</a></li>
+                    <li><a class="dropdown-item" href="#">Zakończ uprawę</a></li>
+                    <li><a class="dropdown-item text-danger" href="#">Usuń uprawę</a></li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
     
   <div class="row">
       <div class="col-1"></div>

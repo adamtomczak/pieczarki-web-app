@@ -258,7 +258,7 @@ def newcultivation():
         
         cost = Cost(
             cultivation_id = db.session.query(Cultivation.id).filter_by(hall_id = answ["hall_id"]).scalar(),
-            name = "Kostka",
+            name = "kostka",
             value = float(answ["price"]) * float(answ["cubes_count"])
         )
         db.session.add(cost)
@@ -294,20 +294,23 @@ def newhall():
             error["name"] = True
             return render_template("newhall.html", error=error)
 
-        if not request.form.get("max_cubes"):
-            error["max_cubes"] = True
-            return render_template("newhall.html", error=error)
+        halls = Hall.query.all()
 
-        if not request.form.get("area"):
-            error["area"] = True
-            return render_template("newhall.html", error=error)
+        for hall in halls:
+            if hall.name == request.form.get("name"):
+                error["taken"] = True
+                return render_template("newhall.html", error=error)
 
         hall = Hall(
             user_id = session["user_id"],
-            name = request.form.get("name"),
-            max_cubes = request.form.get("max_cubes"),
-            area = request.form.get("area")
+            name = request.form.get("name")
         )
+
+        if request.form.get("max_cubes"):
+            hall.max_cubes = request.form.get("max_cubes")
+        if request.form.get("max_cubes"):
+            hall.area = request.form.get("area")
+        
         db.session.add(hall)
         db.session.commit()
 
@@ -394,6 +397,18 @@ def peat(cultivation_id):
         date = request.form.get("date")
         cultivation.peat_date = datetime.strptime(date, '%Y-%m-%d').date()
         cultivation.status = "torf"
+        cost = Cost(
+            cultivation_id = cultivation.id,
+            name = "torf",
+            value = request.form.get("price")
+        )
+        db.session.add(cost)
+
+        if request.form.get("workers"):
+            cost.name = "pracownicy torf"
+            cost.value = request.form.get("workers")
+        
+        db.session.add(cost)
         db.session.commit()
 
         flash("Dodano datę torfu:" + date)

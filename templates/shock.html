@@ -7,7 +7,7 @@
 {% block main %}
 <div class="flex-column d-flex align-items-center col-md-6 mx-auto py-5 col-lg-4">
     <form action="/shock/{{ cultivation.id }}" method="post" class="p-md-5 border rounded-3 bg-light">
-        <h3 class="p2 text-center">Szok, pieczarkarnia: {{ cultivation.hall.name }}</h3>
+        <h4 class="p2 text-center">Szok, pieczarkarnia: {{ cultivation.hall.name }}</h4>
         <div class="p-2">
             <label for="date">Szok data</label>
             <input autocomplete="off" type="datetime-local" class="form-control w-auto" value="{{ date }}" id="date" name="date" placeholder="Data">

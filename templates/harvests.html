@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block main %}
+{% if cultivations %}
 <div class="p-4 p-md-5 border rounded-3 bg-light text-center">
     <h2 class="p-3 text-center">Zbiory</h2>
     {% for cultivation in cultivations %}
@@ -48,4 +49,7 @@
     </table>
     {% endfor %}
 </div>
-  {% endblock %}
+{% else %}
+<h3 class="text-center"> Nie masz żadnych zbiorów.</h3>
+{% endif %}
+{% endblock %}

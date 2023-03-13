@@ -7,10 +7,18 @@
 {% block main %}
 <div class="flex-column d-flex align-items-center col-md-6 mx-auto py-5 col-lg-4">
     <form action="/peat/{{ cultivation.id }}" method="post" class="p-md-5 border rounded-3 bg-light">
-        <h3 class="p2 text-center">Torf, pieczarkarnia: {{ cultivation.hall.name }}</h3>
+        <h4 class="p2 text-center">Torf, pieczarkarnia: {{ cultivation.hall.name }}</h4>
         <div class="p-2">
             <label for="dataKostki">Data włożenia torfu</label>
             <input autocomplete="off" type="date" class="form-control w-auto" value="{{ date }}" id="date" name="date" placeholder="Data">
+        </div>
+        <div class="p-2">
+            <label for="price">Cena torfu</label>
+            <input autocomplete="off" type="number" min="0" step="1" class="form-control w-auto" id="price" name="price" placeholder="Cena">
+        </div>
+        <div class="p-2">
+            <label for="price">Opłacenie pracowników</label>
+            <input autocomplete="off" type="number" min="0" step="1" class="form-control w-auto" id="workers" name="workers" placeholder="Pracownicy">
         </div>
         <div class="p-2">
             <button class="w-100 btn btn-lg btn-primary" type="submit">Dodaj datę</button>
